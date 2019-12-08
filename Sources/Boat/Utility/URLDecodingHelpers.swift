@@ -56,7 +56,7 @@ extension URL {
         decoder: Decoder
     ) throws -> URL where Key: CodingKey {
         return try URLDecodingHelpers.decode(
-            self.self,
+            self,
             forKey: key,
             from: container,
             decoder: decoder
@@ -69,7 +69,7 @@ extension URL {
         decoder: Decoder
     ) throws -> URL? where Key: CodingKey {
         return try URLDecodingHelpers.decodeIfPresent(
-            self.self,
+            self,
             forKey: key,
             from: container,
             decoder: decoder
@@ -84,7 +84,7 @@ extension URLComponents {
         decoder: Decoder
     ) throws -> URLComponents where Key: CodingKey {
         return try URLDecodingHelpers.decode(
-            self.self,
+            self,
             forKey: key,
             from: container,
             decoder: decoder
@@ -97,7 +97,7 @@ extension URLComponents {
         decoder: Decoder
     ) throws -> URLComponents? where Key: CodingKey {
         return try URLDecodingHelpers.decodeIfPresent(
-            self.self,
+            self,
             forKey: key,
             from: container,
             decoder: decoder
