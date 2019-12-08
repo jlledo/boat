@@ -1,14 +1,6 @@
 enum ServiceType: Equatable {
     case wanIPConnection(_ version: Int)
-    case unsupported(domain: String, type: String, version: Int)
-
-    init(domain: String, type: String, version: Int) {
-        if domain == Boat.upnpURNNamespace && type == "WANIPConnection" {
-            self = .wanIPConnection(version)
-            return
-        }
-        self = .unsupported(domain: domain, type: type, version: version)
-    }
+    case unsupported(namespace: String, name: String, version: Int)
 
     func isCompatible(with otherType: ServiceType) -> Bool {
         switch (self, otherType) {
@@ -27,65 +19,40 @@ enum ServiceType: Equatable {
     }
 }
 
-extension ServiceType: LosslessStringConvertible {
-    init?(_ urn: String) {
-        let components = urn.components(separatedBy: ":")
-        guard components.count == 5 &&
-            components[0] == "urn" &&
-            components[2] == "service"
-        else {
-            return nil
-        }
-
-        let domain = components[1]
-        let type = components[3]
-        guard let version = Int(components[4]) else { return nil }
-
-        self.init(domain: domain, type: type, version: version)
-    }
-}
-
-extension ServiceType: CustomStringConvertible {
-    var description: String {
-        var namespace: String
-        var serviceType: String
-        var serviceVersion: Int
-
+extension ServiceType: URN {
+    var namespace: String {
         switch self {
-        case .wanIPConnection(let version):
-            namespace = Boat.upnpURNNamespace
-            serviceType = "WANIPConnection"
-            serviceVersion = version
-        case .unsupported(let domain, let type, let version):
-            namespace = domain
-            serviceType = type
-            serviceVersion = version
+        case .wanIPConnection:
+            return Boat.upnpURNNamespace
+        case .unsupported(let namespace, _, _):
+            return namespace
         }
-
-        return "urn:\(namespace):service:\(serviceType):\(serviceVersion)"
     }
-}
-
-extension ServiceType: Encodable {
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(description)
-    }
-}
-
-extension ServiceType: Decodable {
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let urn = try container.decode(String.self)
-
-        guard let serviceType = ServiceType(urn) else {
-            throw DecodingError.typeMismatch(
-                ServiceType.self,
-                DecodingError.Context(
-                    codingPath: decoder.codingPath,
-                    debugDescription: "Value is not a valid ServiceType.")
-            )
+    
+    static let type: URNType = .service
+    
+    var name: String {
+        switch self {
+        case .wanIPConnection:
+            return "WANIPConnection"
+        case .unsupported(_, let name, _):
+            return name
         }
-        self = serviceType
+    }
+    
+    var version: Int {
+        switch self {
+        case .wanIPConnection(let version),
+             .unsupported(_, _, let version):
+            return version
+        }
+    }
+
+    init(namespace: String, name: String, version: Int) {
+        if namespace == Boat.upnpURNNamespace && name == "WANIPConnection" {
+            self = .wanIPConnection(version)
+            return
+        }
+        self = .unsupported(namespace: namespace, name: name, version: version)
     }
 }

@@ -15,13 +15,7 @@ fileprivate class URLDecodingHelpers {
         decoder: Decoder
     ) throws -> T where T: URLType {
         guard let url = type.init(string: value) else {
-            throw DecodingError.typeMismatch(
-                type,
-                DecodingError.Context(
-                    codingPath: decoder.codingPath,
-                    debugDescription: "'\(value)' is not a valid URL."
-                )
-            )
+            throw DecodingHelpers.typeMismatch(value: value, type: type, decoder: decoder)
         }
         return url
     }

@@ -80,8 +80,8 @@ final class BoatTests: XCTestCase {
         )
 
         XCTAssertEqual(deviceType, .unsupported(
-            domain: "example-vendor.org",
-            type: "CoolDevice",
+            namespace: "example-vendor.org",
+            name: "CoolDevice",
             version: 4
         ))
     }

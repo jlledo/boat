@@ -1,35 +1,12 @@
 enum SSDPSearchTarget {
     case all
     case rootDevice
-    case uuid(String)
+    case uuid(UUIDURI)
     case device(DeviceType)
     case service(ServiceType)
 }
 
 extension SSDPSearchTarget: LosslessStringConvertible {
-    init?(_ targetString: String) {
-        switch targetString {
-        case "ssdp:all": self = .all
-        case "upnp:rootdevice": self = .rootDevice
-        default:
-            let components = targetString.components(separatedBy: ":")
-            guard !components.isEmpty else {
-                return nil
-            }
-            if components[0] == "uuid" && components.count == 2 {
-                self = .uuid(components[1])
-            } else if let device = DeviceType(targetString) {
-                self = .device(device)
-            } else if let service = ServiceType(targetString) {
-                self = .service(service)
-            } else {
-                return nil
-            }
-        }
-    }
-}
-
-extension SSDPSearchTarget: CustomStringConvertible {
     var description: String {
         switch self {
         case .all:
@@ -37,11 +14,30 @@ extension SSDPSearchTarget: CustomStringConvertible {
         case .rootDevice:
             return "upnp:rootdevice"
         case .uuid(let uuid):
-            return uuid
+            return String(describing: uuid)
         case .device(let type):
             return String(describing: type)
         case .service(let type):
             return String(describing: type)
+        }
+    }
+
+    init?(_ description: String) {
+        switch description {
+        case "ssdp:all":
+            self = .all
+        case "upnp:rootdevice":
+            self = .rootDevice
+        default:
+            if let uuid = UUIDURI(description) {
+                self = .uuid(uuid)
+            } else if let device = DeviceType(description) {
+                self = .device(device)
+            } else if let service = ServiceType(description) {
+                self = .service(service)
+            } else {
+                return nil
+            }
         }
     }
 }
