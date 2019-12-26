@@ -9,15 +9,23 @@ protocol URI: LosslessStringConvertible, Codable {
     static var scheme: URIScheme { get }
     var authority: Authority? { get }
     var path: String { get }
-    // Might want to add  query and fragment components at some point
+    var fragment: String? { get }
+    // Might want to add  query component at some point
 }
 
 extension URI { // LosslessStringConvertible
     var description: String {
-        if let authority = self.authority {
-            return "\(Self.scheme)://\(authority)\(self.path)"
+        var authority = ""
+        if self.authority != nil {
+            authority = "//\(self.authority!)"
         }
-        return "\(Self.scheme):\(self.path)"
+
+        var fragment = ""
+        if self.fragment != nil {
+            fragment = "#\(self.fragment!)"
+        }
+
+        return "\(Self.scheme):\(authority)\(self.path)\(fragment)"
     }
 }
 

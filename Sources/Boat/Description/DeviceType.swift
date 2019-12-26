@@ -3,7 +3,7 @@ enum DeviceType: Equatable {
     case unsupported(namespace: String, name: String, version: Int)
 }
 
-extension DeviceType: URN {
+extension DeviceType: UPnPObjectURN {
     var namespace: String {
         switch self {
         case .internetGatewayDevice:

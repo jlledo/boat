@@ -57,9 +57,10 @@ public struct PortMapping {
             arguments.append(("NewLeaseDuration", AnyEncodable(self.leaseDuration)))
 
             return UPnPActionInvocation(
-                serviceType: "WANIPConnection",
-                serviceVersion: version,
-                actionName: version == 1 ? "AddPortMapping" : "AddAnyPortMapping",
+                action: UPnPActionURN(
+                    object: .wanIPConnection(version),
+                    action: version == 1 ? "AddPortMapping" : "AddAnyPortMapping"
+                ),
                 arguments: arguments
             )
         }

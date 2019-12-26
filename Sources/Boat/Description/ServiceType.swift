@@ -19,7 +19,7 @@ enum ServiceType: Equatable {
     }
 }
 
-extension ServiceType: URN {
+extension ServiceType: UPnPObjectURN {
     var namespace: String {
         switch self {
         case .wanIPConnection:

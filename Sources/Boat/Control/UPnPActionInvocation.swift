@@ -2,9 +2,7 @@ import Foundation
 import XMLCoder
 
 struct UPnPActionInvocation {
-    let serviceType: String
-    let serviceVersion: Int
-    let actionName: String
+    let action: UPnPActionURN
     let arguments: [(String, AnyEncodable)]
 
     static var rootKey: String {
@@ -15,9 +13,6 @@ struct UPnPActionInvocation {
     private static let envelopeNamespaceValue: String = "http://schemas.xmlsoap.org/soap/envelope/"
     private static let encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/"
     private static let actionNamespaceKey: String = "u"
-    private var actionNamespaceValue: String {
-        "urn:\(Boat.upnpURNNamespace):service:\(serviceType):\(serviceVersion)"
-    }
 }
 
 extension UPnPActionInvocation: Encodable {
@@ -38,10 +33,10 @@ extension UPnPActionInvocation: Encodable {
         )
         var action = body.nestedContainer(
             keyedBy: DynamicKey.self,
-            forKey: DynamicKey("\(Self.actionNamespaceKey):\(actionName)")
+            forKey: DynamicKey("\(Self.actionNamespaceKey):\(self.action.action)")
         )
         try action.encode(
-            actionNamespaceValue,
+            String(describing: action),
             forKey: DynamicKey("xmlns:\(Self.actionNamespaceKey)")
         )
 
@@ -81,10 +76,7 @@ extension UPnPActionInvocation {
 
         request.setValue("\(host):\(port)", forHTTPHeaderField: "HOST")
         request.setValue(#"text/xml; charset="utf-8""#, forHTTPHeaderField: "CONTENT-TYPE")
-        request.setValue(
-            "\"\(actionNamespaceValue)#\(actionName)\"",
-            forHTTPHeaderField: "SOAPACTION"
-        )
+        request.setValue("\"\(String(describing: action))\"", forHTTPHeaderField: "SOAPACTION")
         request.setValue(Boat.userAgent, forHTTPHeaderField: "USER-AGENT")
 
         return request

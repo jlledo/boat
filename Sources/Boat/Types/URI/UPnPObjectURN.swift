@@ -5,7 +5,7 @@ enum URNType: String {
     case service
 }
 
-protocol URN: URI {
+protocol UPnPObjectURN: URI {
     var namespace: String { get }
     static var type: URNType { get }
     var name: String { get }
@@ -14,7 +14,7 @@ protocol URN: URI {
     init(namespace: String, name: String, version: Int)
 }
 
-extension URN { // URI
+extension UPnPObjectURN { // URI
     static var scheme: URIScheme { .urn }
 
     var authority: Authority? { nil }
@@ -27,9 +27,11 @@ extension URN { // URI
             String(version)
         ].joined(separator: ":")
     }
+
+    var fragment: String? { nil }
 }
 
-extension URN { // LosslessStringConvertible
+extension UPnPObjectURN { // LosslessStringConvertible
     init?(_ description: String) {
         let components = description.split(separator: ":")
         guard components.count == 5 &&
