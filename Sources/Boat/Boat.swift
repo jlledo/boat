@@ -118,7 +118,6 @@ public struct Boat {
             )
         }.then { arg0 -> Int in
             let (data, response) = arg0
-            print(String(decoding: data, as: UTF8.self))
             let decoder = XMLDecoder()
             decoder.shouldProcessNamespaces = true
 

@@ -15,8 +15,6 @@ final class BoatTests: XCTestCase {
         ).then {
             XCTAssert(validPortRange ~= $0)
             expectation.fulfill()
-        }.catch {
-            print($0)
         }
 
         wait(for: [expectation], timeout: 5.0)
