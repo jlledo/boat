@@ -17,7 +17,7 @@ public struct PortMapping {
     // TODO: change internalClient to a cached value
     private let gatewayHost: String
     public var internalClient: Promise<String> {
-        return Interface.localAddress(forHost: NWEndpoint.Host(gatewayHost))
+        return Interface.localAddress(forHost: Host(gatewayHost))
     }
 
     public let enabled: Bool

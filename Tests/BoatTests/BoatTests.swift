@@ -33,7 +33,7 @@ final class BoatTests: XCTestCase {
     func testLocalAddressForHost() {
         let expectation = XCTestExpectation(description: "Get local address for common router IP")
 
-        _ = Interface.localAddress(forHost: NWEndpoint.Host("192.168.1.1")).then { _ in
+        _ = Interface.localAddress(forHost: Host("192.168.1.1")).then { _ in
             expectation.fulfill()
         }
 

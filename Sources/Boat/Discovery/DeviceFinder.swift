@@ -95,8 +95,8 @@ struct DeviceFinder {
 
         listenerPortPromise.then { listenerPort in
             let requestConnection = NWConnection(
-                host: NWEndpoint.Host("239.255.255.250"),
-                port: NWEndpoint.Port(1900),
+                host: Host("239.255.255.250"),
+                port: Port(1900),
                 using: .udp
             )
 

@@ -53,8 +53,8 @@ class Interface {
     }
 
     static func localAddress(
-        forHost host: NWEndpoint.Host,
-        port: NWEndpoint.Port = .http,
+        forHost host: Host,
+        port: Port = .http,
         using parameters: NWParameters = .tcp
     ) -> Promise<String> {
         return Promise() { fulfill, reject in
