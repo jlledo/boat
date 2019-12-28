@@ -7,8 +7,8 @@ struct SSDPSearchResponseV2: SSDPSearchResponseProtocolV2 {
     let server: String
     let searchTarget: SSDPSearchTarget
     let usn: String
-    let bootID: Int
-    let configID: Int?
+    let bootId: Int
+    let configId: Int?
     let searchPort: Int?
     let secureLocation: URL?
 }
@@ -21,12 +21,12 @@ extension SSDPSearchResponseV2 {
 
         let headers = messageInfo.headers
 
-        self.bootID = try SSDPSearchResponseHelpers.extract(
+        self.bootId = try SSDPSearchResponseHelpers.extract(
             header: "BOOTID.UPNP.ORG",
             from: headers,
             as: Int.self
         )
-        self.configID = try SSDPSearchResponseHelpers.extractIfPresent(
+        self.configId = try SSDPSearchResponseHelpers.extractIfPresent(
             header: "CONFIGID.UPNP.ORG",
             from: headers,
             as: Int.self
