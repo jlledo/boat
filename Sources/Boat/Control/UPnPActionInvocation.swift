@@ -6,38 +6,38 @@ struct UPnPActionInvocation {
     let arguments: [(String, AnyEncodable)]
 
     static var rootKey: String {
-        "\(Self.envelopeNamespaceKey):Envelope"
+        "\(Self.soapNamespacePrefix):Envelope"
     }
 
-    private static let envelopeNamespaceKey: String = "s"
-    private static let envelopeNamespaceValue: String = "http://schemas.xmlsoap.org/soap/envelope/"
+    private static let soapNamespacePrefix: String = "s"
+    private static let soapNamespaceIdentifier: String = "http://schemas.xmlsoap.org/soap/envelope/"
     private static let encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/"
-    private static let actionNamespaceKey: String = "u"
+    private static let upnpNamespacePrefix: String = "u"
 }
 
 extension UPnPActionInvocation: Encodable {
     func encode(to encoder: Encoder) throws {
         var envelope = encoder.container(keyedBy: DynamicKey.self)
         try envelope.encode(
-            Self.envelopeNamespaceValue,
-            forKey: DynamicKey("xmlns:\(Self.envelopeNamespaceKey)")
+            Self.soapNamespaceIdentifier,
+            forKey: DynamicKey("xmlns:\(Self.soapNamespacePrefix)")
         )
         try envelope.encode(
             Self.encodingStyle,
-            forKey: DynamicKey("\(Self.envelopeNamespaceKey):encodingStyle")
+            forKey: DynamicKey("\(Self.soapNamespacePrefix):encodingStyle")
         )
 
         var body = envelope.nestedContainer(
             keyedBy: DynamicKey.self,
-            forKey: DynamicKey("\(Self.envelopeNamespaceKey):Body")
+            forKey: DynamicKey("\(Self.soapNamespacePrefix):Body")
         )
         var action = body.nestedContainer(
             keyedBy: DynamicKey.self,
-            forKey: DynamicKey("\(Self.actionNamespaceKey):\(self.action.name)")
+            forKey: DynamicKey("\(Self.upnpNamespacePrefix):\(self.action.name)")
         )
         try action.encode(
             String(describing: self.action.objectType),
-            forKey: DynamicKey("xmlns:\(Self.actionNamespaceKey)")
+            forKey: DynamicKey("xmlns:\(Self.upnpNamespacePrefix)")
         )
 
         for (argument, value) in arguments {
@@ -48,9 +48,9 @@ extension UPnPActionInvocation: Encodable {
 
 extension UPnPActionInvocation: DynamicNodeEncoding {
     static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
-        if key.stringValue == "xmlns:\(Self.envelopeNamespaceKey)" ||
-            key.stringValue == "xmlns:\(Self.actionNamespaceKey)" ||
-            key.stringValue == "\(Self.envelopeNamespaceKey):encodingStyle" {
+        if key.stringValue == "xmlns:\(Self.soapNamespacePrefix)" ||
+            key.stringValue == "xmlns:\(Self.upnpNamespacePrefix)" ||
+            key.stringValue == "\(Self.soapNamespacePrefix):encodingStyle" {
             return .attribute
         }
 
