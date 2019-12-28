@@ -14,9 +14,9 @@ class SSDPParser {
             throw SSDPParserError.invalidSSDPMessageType("Message is empty.")
         }
 
-        let firstLine = String(lines[0])
-        guard let messageType = SSDPMessageType(rawValue: firstLine) else {
-            throw SSDPParserError.invalidSSDPMessageType(firstLine)
+        let startLine = String(lines[0])
+        guard let messageType = SSDPMessageType(rawValue: startLine) else {
+            throw SSDPParserError.invalidSSDPMessageType(startLine)
         }
 
         var headers: [String: String] = [:]

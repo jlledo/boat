@@ -1,8 +1,6 @@
 import Foundation
 
 protocol SSDPSearchResponseProtocolV1 {
-    static var responseLine: SSDPMessageType { get }
-
     var cacheValidity: Int { get }
     var date: Date? { get }
     var location: URL { get }
@@ -14,8 +12,6 @@ protocol SSDPSearchResponseProtocolV1 {
 }
 
 extension SSDPSearchResponseProtocolV1 {
-    static var responseLine: SSDPMessageType { .searchResponse }
-
     static func parse(
         messageInfo: SSDPMessageInfo
     ) throws -> (
@@ -26,9 +22,9 @@ extension SSDPSearchResponseProtocolV1 {
         searchTarget: SSDPSearchTarget,
         usn: String
     ) {
-        guard messageInfo.messageType == Self.responseLine else {
+        guard messageInfo.messageType == .searchResponse else {
             throw DiscoveryError.unexpectedMessageType(
-                expected: Self.responseLine.rawValue,
+                expected: SSDPMessageType.searchResponse.rawValue,
                 found: messageInfo.messageType.rawValue
             )
         }

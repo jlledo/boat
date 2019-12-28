@@ -1,8 +1,6 @@
 import Foundation
 
 struct SSDPMulticastSearchRequest {
-    static let requestLine: SSDPMessageType = .searchRequest
-
     static let host: String = "239.255.255.250:1900"
     static let namespace = "\"ssdp:discover\""
     let timeout: Int = 3
@@ -22,7 +20,7 @@ private extension String {
 
 extension SSDPMulticastSearchRequest {
     func ssdpEncoded() -> Data {
-        var request = "\(Self.requestLine.rawValue)\r\n"
+        var request = "\(SSDPMessageType.searchRequest.rawValue)\r\n"
         request.appendHeaderIfExists("HOST", value: Self.host)
         request.appendHeaderIfExists("MAN", value: Self.namespace)
         request.appendHeaderIfExists("MX", value: timeout)
