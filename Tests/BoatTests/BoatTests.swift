@@ -86,7 +86,10 @@ final class BoatTests: XCTestCase {
 
     func testGetGatewayDeviceDescription() {
         let expectation = XCTestExpectation(description: "Get gateway device description")
-        _ = UPnPDiscovery.gatewayDescriptionURL.then { _ in
+        _ = DeviceFinder(
+            target: .all,
+            friendlyName: "BoatTests"
+        ).gatewayDescriptionURL.then { _ in
             expectation.fulfill()
         }
 

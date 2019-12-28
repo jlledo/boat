@@ -3,29 +3,46 @@ import Network
 import Promises
 import Socket
 
-class UPnPDiscovery {
-    private init() {}
+struct DeviceFinder {
+    let target: SSDPSearchTarget
 
-    static func searchForV1(target: SSDPSearchTarget, friendlyName: String) -> Promise<URL> {
+    let friendlyName: String
+
+    let socketProvider: SocketProviderProtocol.Type
+
+    private func multicastSearchRequest(responseTCPPort: Int?) -> SSDPMulticastSearchRequest {
+        SSDPMulticastSearchRequest(
+            target: self.target,
+            responseTCPPort: responseTCPPort,
+            friendlyName: self.friendlyName,
+            uuid: nil
+        )
+    }
+
+    init(
+        target: SSDPSearchTarget,
+        friendlyName: String,
+        socketProvider: SocketProviderProtocol.Type = SocketProvider.self
+    ) {
+        self.target = target
+        self.friendlyName = friendlyName
+        self.socketProvider = socketProvider
+    }
+
+    private func searchV1() -> Promise<URL> {
         // Dispatch on global queue to avoid waiting on Main thread in readDatagram(into:)
         return Promise(on: .global()) { fulfill, reject in
             // Create socket
-            let socket = try Socket.create(family: .inet, type: .datagram, proto: .udp)
+            let socket = try self.socketProvider.create(family: .inet, type: .datagram, proto: .udp)
             defer {
                 socket.close()
             }
 
             // Send query to SSDP multicast address
-            let searchRequestData = SSDPMulticastSearchRequest(
-                timeout: 1,
-                target: target,
-                responseTCPPort: nil,
-                friendlyName: friendlyName,
-                uuid: nil
-            ).ssdpEncoded()
+            let searchRequest = self.multicastSearchRequest(responseTCPPort: nil)
 
             let destinationSocketAddress = Socket.createAddress(for: "239.255.255.250", on: 1900)!
-            try socket.write(from: searchRequestData, to: destinationSocketAddress)
+            try socket.write(from: searchRequest.ssdpEncoded(), to: destinationSocketAddress)
 
             // Read response
             var searchResponseData = Data()
@@ -38,7 +55,7 @@ class UPnPDiscovery {
         }.timeout(1.5)
     }
 
-    static func searchForV2(target: SSDPSearchTarget, friendlyName: String) -> Promise<URL> {
+    private func searchV2() -> Promise<URL> {
         let descriptionURLPromise = Promise<URL>.pending().timeout(2)
 
         var listener: NWListener?
@@ -86,13 +103,7 @@ class UPnPDiscovery {
             requestConnection.stateUpdateHandler = { newState in
                 switch newState {
                 case .ready:
-                    let searchRequest = SSDPMulticastSearchRequest(
-                        timeout: 1,
-                        target: target,
-                        responseTCPPort: listenerPort,
-                        friendlyName: friendlyName,
-                        uuid: nil
-                    )
+                    let searchRequest = self.multicastSearchRequest(responseTCPPort: listenerPort)
                     requestConnection.send(
                         content: searchRequest.ssdpEncoded(),
                         completion: .idempotent
@@ -112,14 +123,11 @@ class UPnPDiscovery {
         return descriptionURLPromise
     }
 
-    static func searchFor(target: SSDPSearchTarget, friendlyName: String) -> Promise<URL> {
-        let descriptionURLV2 = searchForV2(target: target, friendlyName: friendlyName)
-        let descriptionURLV1 = searchForV1(target: target, friendlyName: friendlyName)
-
-        return race([descriptionURLV2, descriptionURLV1])
+    func search() -> Promise<URL> {
+        race([searchV2(), searchV1()])
     }
 
-    static var gatewayDescriptionURL: Promise<URL> {
-        return searchFor(target: .all, friendlyName: "Boat")
+    var gatewayDescriptionURL: Promise<URL> {
+        return search()
     }
 }

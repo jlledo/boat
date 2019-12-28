@@ -5,7 +5,7 @@ struct SSDPMulticastSearchRequest {
 
     static let host: String = "239.255.255.250:1900"
     static let namespace = "\"ssdp:discover\""
-    let timeout: Int
+    let timeout: Int = 3
     let target: SSDPSearchTarget
     static let userAgent: String? = Boat.userAgent
     let responseTCPPort: Int?

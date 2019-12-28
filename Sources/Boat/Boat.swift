@@ -36,10 +36,10 @@ public struct Boat {
         forService serviceType: ServiceType,
         matchVersion: Bool = false
     ) -> Promise<URL> {
-        let descriptionURLPromise = UPnPDiscovery.searchFor(
+        let descriptionURLPromise = DeviceFinder(
             target: .service(serviceType),
             friendlyName: "Boat"
-        )
+        ).search()
 
         let baseURLPromise = descriptionURLPromise.then { url -> URLComponents in
             var components = URLComponents()
