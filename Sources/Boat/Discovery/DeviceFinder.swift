@@ -29,7 +29,7 @@ struct DeviceFinder {
         self.socketProvider = socketProvider
     }
 
-    private func searchV1() -> Promise<URL> {
+    func search() -> Promise<URL> {
         // Dispatch on global queue to avoid waiting on Main thread in readDatagram(into:)
         return Promise(on: .global()) { fulfill, reject in
             // Create socket
@@ -121,10 +121,6 @@ struct DeviceFinder {
         listener?.start(queue: .global())
 
         return descriptionURLPromise
-    }
-
-    func search() -> Promise<URL> {
-        race([searchV2(), searchV1()])
     }
 
     var gatewayDescriptionURL: Promise<URL> {
