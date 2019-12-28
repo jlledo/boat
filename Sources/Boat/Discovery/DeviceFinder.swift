@@ -94,11 +94,7 @@ struct DeviceFinder {
         }
 
         listenerPortPromise.then { listenerPort in
-            let requestConnection = NWConnection(
-                host: Host("239.255.255.250"),
-                port: Port(1900),
-                using: .udp
-            )
+            let requestConnection = NWConnection(host: .ssdpGroup, port: .ssdp, using: .udp)
 
             requestConnection.stateUpdateHandler = { newState in
                 switch newState {
