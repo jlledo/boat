@@ -1,6 +1,6 @@
 struct UPnPActionURN {
-    let object: ServiceType
-    let action: String
+    let objectType: ServiceType
+    let name: String
 }
 
 extension UPnPActionURN: URI {
@@ -8,9 +8,9 @@ extension UPnPActionURN: URI {
 
     var authority: Authority? { nil }
 
-    var path: String { object.path }
+    var path: String { objectType.path }
 
-    var fragment: String? { action }
+    var fragment: String? { name }
 }
 
 extension UPnPActionURN { // LosslessStringConvertible
@@ -19,8 +19,8 @@ extension UPnPActionURN { // LosslessStringConvertible
         guard components.count == 2 else { return nil }
 
         guard let service = ServiceType(String(components[0])) else { return nil }
-        object = service
+        objectType = service
 
-        action = String(components[1])
+        name = String(components[1])
     }
 }

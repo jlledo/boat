@@ -58,8 +58,8 @@ public struct PortMapping {
 
             return UPnPActionInvocation(
                 action: UPnPActionURN(
-                    object: .wanIPConnection(version),
-                    action: version == 1 ? "AddPortMapping" : "AddAnyPortMapping"
+                    objectType: .wanIPConnection(version),
+                    name: version == 1 ? "AddPortMapping" : "AddAnyPortMapping"
                 ),
                 arguments: arguments
             )

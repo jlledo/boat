@@ -33,10 +33,10 @@ extension UPnPActionInvocation: Encodable {
         )
         var action = body.nestedContainer(
             keyedBy: DynamicKey.self,
-            forKey: DynamicKey("\(Self.actionNamespaceKey):\(self.action.action)")
+            forKey: DynamicKey("\(Self.actionNamespaceKey):\(self.action.name)")
         )
         try action.encode(
-            String(describing: action),
+            String(describing: self.action.objectType),
             forKey: DynamicKey("xmlns:\(Self.actionNamespaceKey)")
         )
 
