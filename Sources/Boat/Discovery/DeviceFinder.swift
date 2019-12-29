@@ -10,8 +10,9 @@ struct DeviceFinder {
 
     let socketProvider: SocketProviderProtocol.Type
 
-    private func multicastSearchRequest(responseTCPPort: Int?) -> SSDPMulticastSearchRequest {
-        SSDPMulticastSearchRequest(
+    private func searchRequest(host: Socket.Address, responseTCPPort: Int?) -> SSDPSearchRequest {
+        SSDPSearchRequest(
+            host: host,
             target: self.target,
             responseTCPPort: responseTCPPort,
             friendlyName: self.friendlyName,
@@ -29,7 +30,7 @@ struct DeviceFinder {
         self.socketProvider = socketProvider
     }
 
-    func search() -> Promise<URL> {
+    func search(at address: Socket.Address = .ssdpMulticast) -> Promise<URL> {
         // Dispatch on global queue to avoid waiting on Main thread in readDatagram(into:)
         return Promise(on: .global()) { fulfill, reject in
             // Create socket
@@ -39,7 +40,7 @@ struct DeviceFinder {
             }
 
             // Send query to SSDP multicast address
-            let searchRequest = self.multicastSearchRequest(responseTCPPort: nil)
+            let searchRequest = self.searchRequest(host: address, responseTCPPort: nil)
 
             let destinationSocketAddress = Socket.createAddress(for: "239.255.255.250", on: 1900)!
             try socket.write(from: searchRequest.ssdpEncoded(), to: destinationSocketAddress)
@@ -55,7 +56,7 @@ struct DeviceFinder {
         }.timeout(1.5)
     }
 
-    private func searchV2() -> Promise<URL> {
+    private func searchV2(at address: Socket.Address = .ssdpMulticast) -> Promise<URL> {
         let descriptionURLPromise = Promise<URL>.pending().timeout(2)
 
         var listener: NWListener?
@@ -99,7 +100,10 @@ struct DeviceFinder {
             requestConnection.stateUpdateHandler = { newState in
                 switch newState {
                 case .ready:
-                    let searchRequest = self.multicastSearchRequest(responseTCPPort: listenerPort)
+                    let searchRequest = self.searchRequest(
+                        host: address,
+                        responseTCPPort: listenerPort
+                    )
                     requestConnection.send(
                         content: searchRequest.ssdpEncoded(),
                         completion: .idempotent

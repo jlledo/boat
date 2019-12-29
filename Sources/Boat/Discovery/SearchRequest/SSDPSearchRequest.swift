@@ -1,7 +1,10 @@
 import Foundation
+import Socket
 
-struct SSDPMulticastSearchRequest {
-    static let host: String = "239.255.255.250:1900"
+/// SSDP multicast search request.
+/// It can also be used for unicast since extra headers will be ignored.
+struct SSDPSearchRequest {
+    let host: Socket.Address
     static let namespace = "\"ssdp:discover\""
     let timeout: Int = 3
     let target: SSDPSearchTarget
@@ -14,14 +17,14 @@ struct SSDPMulticastSearchRequest {
 private extension String {
     mutating func appendHeaderIfExists(_ header: String, value: CustomStringConvertible?) {
         guard let value = value else { return }
-        self += "\(header): \(value)\r\n"
+        self += "\(header): \(String(describing: value))\r\n"
     }
 }
 
-extension SSDPMulticastSearchRequest {
+extension SSDPSearchRequest {
     func ssdpEncoded() -> Data {
         var request = "\(SSDPMessageType.searchRequest.rawValue)\r\n"
-        request.appendHeaderIfExists("HOST", value: Self.host)
+        request.appendHeaderIfExists("HOST", value: host)
         request.appendHeaderIfExists("MAN", value: Self.namespace)
         request.appendHeaderIfExists("MX", value: timeout)
         request.appendHeaderIfExists("ST", value: target)
