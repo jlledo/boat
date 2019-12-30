@@ -36,7 +36,7 @@ extension UPnPActionInvocation: Encodable {
             forKey: DynamicKey("\(Self.upnpNamespacePrefix):\(self.action.name)")
         )
         try action.encode(
-            String(describing: self.action.objectType),
+            String(describing: self.action.serviceType),
             forKey: DynamicKey("xmlns:\(Self.upnpNamespacePrefix)")
         )
 

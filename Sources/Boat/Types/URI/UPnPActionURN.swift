@@ -1,5 +1,5 @@
 struct UPnPActionURN {
-    let objectType: ServiceType
+    let serviceType: ServiceType
     let name: String
 }
 
@@ -8,7 +8,7 @@ extension UPnPActionURN: URI {
 
     var authority: Authority? { nil }
 
-    var path: String { objectType.path }
+    var path: String { serviceType.path }
 
     var fragment: String? { name }
 }
@@ -19,7 +19,7 @@ extension UPnPActionURN { // LosslessStringConvertible
         guard components.count == 2 else { return nil }
 
         guard let service = ServiceType(String(components[0])) else { return nil }
-        objectType = service
+        serviceType = service
 
         name = String(components[1])
     }
