@@ -9,7 +9,7 @@ extension UUIDURI { // URI
 
     var authority: Authority? { nil }
 
-    var path: String { "uuid:\(self.uuid)" }
+    var path: String { uuid }
 
     var fragment: String? { nil }
 }
