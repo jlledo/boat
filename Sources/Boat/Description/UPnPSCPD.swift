@@ -1,3 +1,5 @@
+import Version
+
 struct SCPD {
     // TODO: Handle xmlns attribute
 

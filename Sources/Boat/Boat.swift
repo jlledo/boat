@@ -1,6 +1,7 @@
 import Foundation
 import Network
 import Promises
+import Version
 import XMLCoder
 
 public struct Boat {
@@ -11,11 +12,9 @@ public struct Boat {
 
     static var userAgent: String {
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
-        return """
-            \(Boat.osName)/\(osVersion.majorVersion).\(osVersion.minorVersion) \
-            UPnP/2.0 \
-            \(Boat.packageName)/\(packageVersion.major).\(packageVersion.minor)
-            """
+        return "\(Boat.osName)/\(osVersion.majorVersion).\(osVersion.minorVersion) " +
+            "UPnP/2.0 " +
+            "\(Boat.packageName)/\(packageVersion)"
     }
 
     static let upnpURNNamespace = "schemas-upnp-org"

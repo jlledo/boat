@@ -1,4 +1,5 @@
 import Foundation
+import Version
 
 struct UPnPDeviceDescriptionV1: UPnPDeviceDescriptionV1Protocol {
     let specVersion: Version

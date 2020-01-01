@@ -1,4 +1,5 @@
 import Foundation
+import Version
 
 protocol UPnPDeviceDescriptionV1Protocol {
     var specVersion: Version { get }

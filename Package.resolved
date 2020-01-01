@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "Version",
+        "repositoryURL": "https://github.com/mrackwitz/Version.git",
+        "state": {
+          "branch": null,
+          "revision": "43b1588916820687a056a305720f8f64161ca810",
+          "version": "0.7.2"
+        }
+      },
+      {
         "package": "XMLCoder",
         "repositoryURL": "https://github.com/MaxDesiatov/XMLCoder.git",
         "state": {

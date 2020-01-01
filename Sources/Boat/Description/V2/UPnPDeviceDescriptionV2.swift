@@ -1,4 +1,5 @@
 import Foundation
+import Version
 import XMLCoder
 
 struct UPnPDeviceDescriptionV2: UPnPDeviceDescriptionV2Protocol {

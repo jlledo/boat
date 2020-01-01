@@ -22,6 +22,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/google/promises.git", from: "1.2.8"),
         .package(url: "https://github.com/IBM-Swift/BlueSocket.git", from: "1.0.52"),
+        .package(url: "https://github.com/mrackwitz/Version.git", from: "0.7.2"),
         .package(url: "https://github.com/MaxDesiatov/XMLCoder.git", from: "0.8.0"),
     ],
     targets: [
@@ -32,6 +33,7 @@ let package = Package(
             dependencies: [
                 "Promises",
                 "Socket",
+                "Version",
                 "XMLCoder",
             ]
         ),
