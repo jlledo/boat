@@ -11,7 +11,7 @@ struct SSDPSearchRequest {
     static let userAgent: String? = Boat.userAgent
     let responseTCPPort: Int?
     let friendlyName: String
-    let uuid: String?
+    let uuid: UUIDURI?
 }
 
 private extension String {
