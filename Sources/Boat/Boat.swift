@@ -7,17 +7,7 @@ public struct Boat {
     public static let packageName = "Boat"
     public static let packageVersion = Version(major: 0, minor: 1)
 
-    #if os(macOS)
     static let osName = "macOS"
-    #elseif os(iOS)
-    static let osName = "iOS"
-    #elseif os(watchOS)
-    static let osName = "watchOS"
-    #elseif os(tvOS)
-    static let osName = "tvOS"
-    #elseif os(Linux)
-    static let osName = "Linux"
-    #endif
 
     static var userAgent: String {
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
