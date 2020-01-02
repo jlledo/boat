@@ -4,7 +4,7 @@ struct SSDPSearchResponseV1: SSDPSearchResponseProtocolV1 {
     let cacheValidity: Int
     let date: Date?
     let location: URL
-    let server: String
+    let server: ProductIdentifier?
     let searchTarget: SSDPSearchTarget
     let usn: String
 }

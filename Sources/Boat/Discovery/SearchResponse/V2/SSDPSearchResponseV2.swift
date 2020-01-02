@@ -4,7 +4,7 @@ struct SSDPSearchResponseV2: SSDPSearchResponseProtocolV2 {
     let cacheValidity: Int
     let date: Date?
     let location: URL
-    let server: String
+    let server: ProductIdentifier?
     let searchTarget: SSDPSearchTarget
     let usn: String
     let bootId: Int

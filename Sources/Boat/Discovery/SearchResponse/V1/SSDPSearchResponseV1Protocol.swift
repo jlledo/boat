@@ -4,7 +4,8 @@ protocol SSDPSearchResponseProtocolV1 {
     var cacheValidity: Int { get }
     var date: Date? { get }
     var location: URL { get }
-    var server: String { get }
+    // Required in UDA v1, but optional because we need to tolerate failure
+    var server: ProductIdentifier? { get }
     var searchTarget: SSDPSearchTarget { get }
     var usn: String { get }
 
@@ -18,7 +19,7 @@ extension SSDPSearchResponseProtocolV1 {
         cacheValidity: Int,
         date: Date?,
         location: URL,
-        server: String,
+        server: ProductIdentifier?,
         searchTarget: SSDPSearchTarget,
         usn: String
     ) {
@@ -62,9 +63,10 @@ extension SSDPSearchResponseProtocolV1 {
             from: headers,
             as: URL.self
         )
-        let server = try SSDPSearchResponseHelpers.extract(
+        let server = try? SSDPSearchResponseHelpers.extract(
             header: "SERVER",
-            from: headers
+            from: headers,
+            as: ProductIdentifier.self
         )
         let searchTarget = try SSDPSearchResponseHelpers.extract(
             header: "ST",

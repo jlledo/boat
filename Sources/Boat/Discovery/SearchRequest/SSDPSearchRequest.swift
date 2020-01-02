@@ -8,7 +8,7 @@ struct SSDPSearchRequest {
     static let namespace = "\"ssdp:discover\""
     let timeout: Int = 3
     let target: SSDPSearchTarget
-    static let userAgent: String? = Boat.userAgent
+    static let userAgent: ProductIdentifier? = Boat.userAgent
     let responseTCPPort: Int?
     let friendlyName: String
     let uuid: UUIDURI?

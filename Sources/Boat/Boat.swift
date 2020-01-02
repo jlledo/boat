@@ -10,11 +10,13 @@ public struct Boat {
 
     static let osName = "macOS"
 
-    static var userAgent: String {
+    static var userAgent: ProductIdentifier {
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
-        return "\(Boat.osName)/\(osVersion.majorVersion).\(osVersion.minorVersion) " +
+        return ProductIdentifier(
+            "\(Self.osName)/\(osVersion.majorVersion).\(osVersion.minorVersion) " +
             "UPnP/2.0 " +
-            "\(Boat.packageName)/\(packageVersion)"
+            "\(Self.packageName)/\(packageVersion)"
+        )!
     }
 
     static let upnpURNNamespace = "schemas-upnp-org"
