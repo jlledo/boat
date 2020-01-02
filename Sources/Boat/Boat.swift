@@ -52,22 +52,8 @@ public struct Boat {
         // This download should take less than 1 second
         // However timeout starts ticking at promise definition
         // So we need to add it onto descriptionURLPromise's timeout
-        }.timeout(20).then { arg0 -> UPnPDeviceDescriptionV1Protocol in
-            let (data, _) = arg0
-            var description: UPnPDeviceDescriptionV1Protocol
-            do {
-                description = try XMLDecoder().decode(
-                    UPnPDeviceDescriptionV2.self,
-                    from: data
-                )
-            } catch {
-                description = try XMLDecoder().decode(
-                    UPnPDeviceDescriptionV1.self,
-                    from: data
-                )
-            }
-            return description
-        }.then { description -> URLComponents in
+        }.timeout(20).then { arg0 -> URLComponents in
+            let description = try XMLDecoder().decode(UPnPDeviceDescription.self, from: arg0.data)
             guard let service = description.findService(ofType: serviceType) else {
                 throw BoatError.serviceNotFound
             }
