@@ -29,8 +29,15 @@ public struct Boat {
     ) -> Promise<URL> {
         let descriptionURLPromise = DeviceFinder(
             target: .service(serviceType),
-            friendlyName: "Boat"
-        ).search()
+            friendlyName: "Boat",
+            uuid: nil
+        ).search().then { responses -> URL in
+            // FIXME: Should check responses received and use another error
+            guard let response = responses.first else {
+                throw DiscoveryError.tooManyGateways
+            }
+            return response.location
+        }
 
         let baseURLPromise = descriptionURLPromise.then { url -> URLComponents in
             var components = URLComponents()
@@ -42,8 +49,10 @@ public struct Boat {
 
         let controlURLPromise = descriptionURLPromise.then {
             URLSession.shared.fetchData(from: $0)
-        }.timeout(2) // 1 second is sometimes too fast to get a response
-        .then { arg0 -> UPnPDeviceDescriptionV1Protocol in
+        // This download should take less than 1 second
+        // However timeout starts ticking at promise definition
+        // So we need to add it onto descriptionURLPromise's timeout
+        }.timeout(20).then { arg0 -> UPnPDeviceDescriptionV1Protocol in
             let (data, _) = arg0
             var description: UPnPDeviceDescriptionV1Protocol
             do {

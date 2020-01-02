@@ -4,4 +4,6 @@ enum DiscoveryError: Error {
     case invalidHeader(String)
     case incompatibleHeaderType(type: String, header: String)
     case searchResponseTimeout(UInt)
+    case gatewayNotFound
+    case tooManyGateways
 }

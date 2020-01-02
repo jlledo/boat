@@ -6,7 +6,7 @@ import Socket
 struct SSDPSearchRequest {
     let host: Socket.Address
     static let namespace = "\"ssdp:discover\""
-    let timeout: Int = 3
+    let timeout: Int
     let target: SSDPSearchTarget
     static let userAgent: ProductIdentifier? = Boat.userAgent
     let responseTCPPort: Int?

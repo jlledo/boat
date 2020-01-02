@@ -84,16 +84,13 @@ final class BoatTests: XCTestCase {
         ))
     }
 
-    func testGetGatewayDeviceDescription() {
+    func testSearchGateway() {
         let expectation = XCTestExpectation(description: "Get gateway device description")
-        _ = DeviceFinder(
-            target: .all,
-            friendlyName: "BoatTests"
-        ).gatewayDescriptionURL.then { _ in
+        _ = DeviceFinder.searchGateway(friendlyName: "BoatTests").then { _ in
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 5.0)
+        wait(for: [expectation], timeout: 4.0)
     }
 
     func testEndpointForService() {
@@ -153,7 +150,7 @@ final class BoatTests: XCTestCase {
         ("testActionInvocationEncoding", testActionInvocationEncoding),
         ("testDeviceTypeFromDecoderStandard", testDeviceTypeFromDecoderStandard),
         ("testDeviceTypeFromDecoderVendor", testDeviceTypeFromDecoderVendor),
-        ("testGetGatewayDeviceDescription", testGetGatewayDeviceDescription),
+        ("testSearchGateway", testSearchGateway),
         ("testEndpointForService", testEndpointForService),
         ("testServiceTypeEquatable", testServiceTypeEquatable),
         ("testServiceTypeIsCompatible", testServiceTypeIsCompatible),
