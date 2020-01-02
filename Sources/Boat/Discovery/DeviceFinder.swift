@@ -50,7 +50,7 @@ struct DeviceFinder {
             _ = try socket.readDatagram(into: &searchResponseData)
 
             // Decode response
-            let response = try SSDPSearchResponseV1(from: searchResponseData)
+            let response = try SSDPSearchResponse(from: searchResponseData)
 
             fulfill(response.location)
         }.timeout(1.5)
@@ -69,12 +69,14 @@ struct DeviceFinder {
         listener?.newConnectionHandler = { newConnection in
             newConnection.start(queue: .global())
             newConnection.receiveMessage { data, _, _, error in
-                guard error == nil else {
+                guard let data = data,
+                    error == nil
+                else {
                     descriptionURLPromise.reject(error!)
                     return
                 }
                 do {
-                    let response = try SSDPSearchResponseV2(from: data)
+                    let response = try SSDPSearchResponse(from: data)
                     descriptionURLPromise.fulfill(response.location)
                 } catch let discoveryError {
                     descriptionURLPromise.reject(discoveryError)

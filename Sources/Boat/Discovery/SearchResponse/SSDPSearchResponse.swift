@@ -1,28 +1,24 @@
 import Foundation
 
-protocol SSDPSearchResponseProtocolV1 {
-    var cacheValidity: Int { get }
-    var date: Date? { get }
-    var location: URL { get }
+struct SSDPSearchResponse {
+    let cacheValidity: Int
+    let date: Date?
+    let location: URL
     // Required in UDA v1, but optional because we need to tolerate failure
-    var server: ProductIdentifier? { get }
-    var searchTarget: SSDPSearchTarget { get }
-    var usn: String { get }
-
-    init(from data: Data?) throws
+    let server: ProductIdentifier?
+    let searchTarget: SSDPSearchTarget
+    let usn: String
+    // UDA v2.0
+    // Required in UDA v2.0, but optional for v1 compatiblity
+    let bootId: Int?
+    let configId: Int?
+    let searchPort: Int?
+    let secureLocation: URL?
 }
 
-extension SSDPSearchResponseProtocolV1 {
-    static func parse(
-        messageInfo: SSDPMessageInfo
-    ) throws -> (
-        cacheValidity: Int,
-        date: Date?,
-        location: URL,
-        server: ProductIdentifier?,
-        searchTarget: SSDPSearchTarget,
-        usn: String
-    ) {
+extension SSDPSearchResponse {
+    init(from data: Data) throws {
+        let messageInfo = try SSDPParser.parse(data)
         guard messageInfo.messageType == .searchResponse else {
             throw DiscoveryError.unexpectedMessageType(
                 expected: SSDPMessageType.searchResponse.rawValue,
@@ -31,7 +27,7 @@ extension SSDPSearchResponseProtocolV1 {
         }
         let headers = messageInfo.headers
 
-        let cacheValidity = try SSDPSearchResponseHelpers.extract(
+        self.cacheValidity = try SSDPSearchResponseHelpers.extract(
             header: "CACHE-CONTROL",
             from: headers,
             as: Int.self
@@ -41,7 +37,7 @@ extension SSDPSearchResponseProtocolV1 {
             }
             return cacheValidityString
         }
-        let date = try SSDPSearchResponseHelpers.extractIfPresent(
+        self.date = try SSDPSearchResponseHelpers.extractIfPresent(
             header: "DATE",
             from: headers
         ) { (header, value) -> Date in
@@ -58,26 +54,44 @@ extension SSDPSearchResponseProtocolV1 {
             }
             return date
         }
-        let location = try SSDPSearchResponseHelpers.extract(
+        self.location = try SSDPSearchResponseHelpers.extract(
             header: "LOCATION",
             from: headers,
             as: URL.self
         )
-        let server = try? SSDPSearchResponseHelpers.extract(
+        self.server = try? SSDPSearchResponseHelpers.extract(
             header: "SERVER",
             from: headers,
             as: ProductIdentifier.self
         )
-        let searchTarget = try SSDPSearchResponseHelpers.extract(
+        self.searchTarget = try SSDPSearchResponseHelpers.extract(
             header: "ST",
             from: headers,
             as: SSDPSearchTarget.self
         )
-        let usn = try SSDPSearchResponseHelpers.extract(
+        self.usn = try SSDPSearchResponseHelpers.extract(
             header: "USN",
             from: headers
         )
-
-        return (cacheValidity, date, location, server, searchTarget, usn)
+        self.bootId = try? SSDPSearchResponseHelpers.extract(
+            header: "BOOTID.UPNP.ORG",
+            from: headers,
+            as: Int.self
+        )
+        self.configId = try SSDPSearchResponseHelpers.extractIfPresent(
+            header: "CONFIGID.UPNP.ORG",
+            from: headers,
+            as: Int.self
+        )
+        self.searchPort = try SSDPSearchResponseHelpers.extractIfPresent(
+            header: "SEARCHPORT.UPNP.ORG",
+            from: headers,
+            as: Int.self
+        )
+        self.secureLocation = try SSDPSearchResponseHelpers.extractIfPresent(
+            header: "SECURELOCATION.UPNP.ORG",
+            from: headers,
+            as: URL.self
+        )
     }
 }

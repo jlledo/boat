@@ -3,12 +3,8 @@ import Foundation
 class SSDPParser {
     private init() {}
 
-    static func parse(_ data: Data?) throws -> SSDPMessageInfo
+    static func parse(_ data: Data) throws -> SSDPMessageInfo
     {
-        guard let data = data else {
-            throw SSDPParserError.missingData
-        }
-
         let lines = String(decoding: data, as: UTF8.self).split(separator: "\r\n")
         guard !lines.isEmpty else {
             throw SSDPParserError.invalidSSDPMessageType("Message is empty.")
