@@ -76,8 +76,8 @@ extension UPnPActionInvocation {
 
         request.setValue("\(host):\(port)", forHTTPHeaderField: "HOST")
         request.setValue(#"text/xml; charset="utf-8""#, forHTTPHeaderField: "CONTENT-TYPE")
-        request.setValue("\"\(String(describing: action))\"", forHTTPHeaderField: "SOAPACTION")
         request.setValue(Boat.userAgent, forHTTPHeaderField: "USER-AGENT")
+        request.setValue("\"\(action)\"", forHTTPHeaderField: "SOAPACTION")
 
         return request
     }

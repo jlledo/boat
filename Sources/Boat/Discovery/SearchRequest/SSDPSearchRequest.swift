@@ -17,7 +17,7 @@ struct SSDPSearchRequest {
 private extension String {
     mutating func appendHeaderIfExists(_ header: String, value: CustomStringConvertible?) {
         guard let value = value else { return }
-        self += "\(header): \(String(describing: value))\r\n"
+        self += "\(header): \(value)\r\n"
     }
 }
 
