@@ -1,5 +1,4 @@
-import Foundation.NSRange
-import Foundation.NSRegularExpression
+import Foundation
 import Version
 
 struct ProductIdentifier {
