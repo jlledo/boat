@@ -43,6 +43,7 @@ fileprivate class URLDecodingHelpers {
     }
 }
 
+// This is a workaround for URL already being Codable, for plists
 extension URL {
     static func decode<Key>(
         _ key: Key,
