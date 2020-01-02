@@ -34,6 +34,10 @@ public struct PortMapping {
         gatewayHost: String,
         enable: Bool = true
     ) {
+        #if DEBUG
+        let leaseDuration = 60
+        #endif
+
         self.externalPort = externalPort
         self.internalPort = internalPort
         self.transportProtocol = transportProtocol

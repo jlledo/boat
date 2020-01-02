@@ -85,22 +85,12 @@ public struct Boat {
             return Promise(BoatError.invalidURL)
         }
 
-        #if DEBUG
-            let portMapping = PortMapping(
-                from: port,
-                to: port,
-                leaseDuration: 60,
-                description: programName,
-                gatewayHost: gatewayHost
-            )
-        #else
-            let portMapping = PortMapping(
-                from: port,
-                to: port,
-                description: programName,
-                gatewayHost: gatewayHost
-            )
-        #endif
+        let portMapping = PortMapping(
+            from: port,
+            to: port,
+            description: programName,
+            gatewayHost: gatewayHost
+        )
 
         return portMapping.buildActionInvocation(version: version).then {
             URLSession.shared.upload(
