@@ -41,23 +41,15 @@ final class BoatTests: XCTestCase {
     }
 
     func testPortMappingControlMessageEncoding() {
-        let expectation = XCTestExpectation(
-            description: "Build port mapping control message without errors"
-        )
-
-        let port = 1024
         let mapping = PortMapping(
-            from: port,
-            to: port,
-            description: "",
-            gatewayHost: "192.168.1.1"
+            externalPort: 1,
+            internalPort: 1,
+            internalClient: "1.2.3.4",
+            description: "TEST"
         )
-        _ = mapping.asControlMessage(forVersion: 1).then {
-            _ = try $0.soapEncoded()
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 5.0)
+        let controlMessage = mapping.asControlMessage(forVersion: 1)
+        let controlMessageSOAPEncoded = try? controlMessage.soapEncoded()
+        XCTAssertNotNil(controlMessageSOAPEncoded)
     }
 
     func testDeviceTypeFromDecoderStandard() {

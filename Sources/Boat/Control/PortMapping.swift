@@ -2,71 +2,42 @@ import Network
 import Promises
 
 public struct PortMapping {
-    public let remoteHost: String
-    public let externalPort: Int
-
     public enum TransportProtocol: String,  Codable {
         case tcp = "TCP"
         case udp = "UDP"
     }
 
-    public let transportProtocol: TransportProtocol
-
+    public let remoteHost: String = ""
+    public let externalPort: Int
+    public let transportProtocol: TransportProtocol = .tcp
     public let internalPort: Int
-
-    // TODO: change internalClient to a cached value
-    private let gatewayHost: String
-    public var internalClient: Promise<String> {
-        return Interface.localAddress(forHost: Host(gatewayHost))
-    }
-
-    public let enabled: Bool
+    public let internalClient: String
+    public let enabled: Bool = true
     public let description: String
-    public let leaseDuration: Int
+    #if DEBUG
+    public let leaseDuration: Int = 60
+    #else
+    public let leaseDuration: Int = 3600
+    #endif
 
-    public init(
-        from externalPort: Int,
-        to internalPort: Int,
-        transportProtocol: TransportProtocol =  .tcp,
-        remoteHost: String = "",
-        leaseDuration: Int = 3600,
-        description: String,
-        gatewayHost: String,
-        enable: Bool = true
-    ) {
-        #if DEBUG
-        let leaseDuration = 60
-        #endif
+    func asControlMessage(forVersion version: Int) -> UPnPControlMessage {
+        let arguments: [(String, AnyEncodable)] = [
+            ("NewRemoteHost",               AnyEncodable(remoteHost)),
+            ("NewExternalPort",             AnyEncodable(externalPort)),
+            ("NewProtocol",                 AnyEncodable(transportProtocol)),
+            ("NewInternalPort",             AnyEncodable(internalPort)),
+            ("NewInternalClient",           AnyEncodable(internalClient)),
+            ("NewEnabled",                  AnyEncodable(enabled ? 1 : 0)),
+            ("NewPortMappingDescription",   AnyEncodable(description)),
+            ("NewLeaseDuration",            AnyEncodable(leaseDuration)),
+        ]
 
-        self.externalPort = externalPort
-        self.internalPort = internalPort
-        self.transportProtocol = transportProtocol
-        self.remoteHost = remoteHost
-        self.leaseDuration = leaseDuration
-        self.description = description
-        self.gatewayHost = gatewayHost
-        self.enabled = enable
-    }
-
-    func asControlMessage(forVersion version: Int) -> Promise<UPnPControlMessage> {
-        return internalClient.then { internalClient -> UPnPControlMessage in
-            var arguments = [(String, AnyEncodable)]()
-            arguments.append(("NewRemoteHost", AnyEncodable(self.remoteHost)))
-            arguments.append(("NewExternalPort", AnyEncodable(self.externalPort)))
-            arguments.append(("NewProtocol", AnyEncodable(self.transportProtocol)))
-            arguments.append(("NewInternalPort", AnyEncodable(self.internalPort)))
-            arguments.append(("NewInternalClient", AnyEncodable(internalClient)))
-            arguments.append(("NewEnabled", AnyEncodable(self.enabled ? 1 : 0)))
-            arguments.append(("NewPortMappingDescription", AnyEncodable(self.description)))
-            arguments.append(("NewLeaseDuration", AnyEncodable(self.leaseDuration)))
-
-            return UPnPControlMessage(
-                action: UPnPActionURN(
-                    serviceType: .wanIPConnection(version),
-                    name: version == 1 ? "AddPortMapping" : "AddAnyPortMapping"
-                ),
-                arguments: arguments
-            )
-        }
+        return UPnPControlMessage(
+            action: UPnPActionURN(
+                serviceType: .wanIPConnection(version),
+                name: version == 1 ? "AddPortMapping" : "AddAnyPortMapping"
+            ),
+            arguments: arguments
+        )
     }
 }

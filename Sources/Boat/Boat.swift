@@ -71,18 +71,25 @@ public struct Boat {
         programName: String,
         version: Int
     ) -> Promise<Int> {
-        guard let gatewayHost = endpoint.host else {
+        guard let gatewayHost = endpoint.host,
+              let gatewayPort = endpoint.port
+        else {
             return Promise(BoatError.invalidURL)
         }
 
-        let portMapping = PortMapping(
-            from: port,
-            to: port,
-            description: programName,
-            gatewayHost: gatewayHost
-        )
-
-        return portMapping.asControlMessage(forVersion: version).then {
+        return Interface.localAddress(
+            forHost: Host(gatewayHost),
+            port: Port(rawValue: UInt16(gatewayPort))!
+        ).then {
+            PortMapping(
+                externalPort: port,
+                internalPort: port,
+                internalClient: $0,
+                description: programName
+            ).asControlMessage(
+                forVersion: version
+            )
+        }.then {
             URLSession.shared.upload(
                 data: try $0.soapEncoded(),
                 with: try $0.soapURLRequest(endpoint: endpoint)
