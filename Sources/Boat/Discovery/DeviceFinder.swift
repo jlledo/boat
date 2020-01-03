@@ -69,7 +69,7 @@ struct DeviceFinder {
         self.socketProvider = socketProvider
     }
 
-    static func gateway(version: Int, friendlyName: String) -> DeviceFinder {
+    static func gatewayFinder(version: Int, friendlyName: String) -> DeviceFinder {
         DeviceFinder(
             target: .service(.wanIPConnection(version)),
             friendlyName: friendlyName,
@@ -145,8 +145,8 @@ struct DeviceFinder {
 
     static func searchGateway(friendlyName: String) -> Promise<SSDPSearchResponse> {
         // Search for all supported WANIPConnection versions
-        let searchV1Promise = DeviceFinder.gateway(version: 1, friendlyName: friendlyName).search()
-        let searchV2Promise = DeviceFinder.gateway(version: 2, friendlyName: friendlyName).search()
+        let searchV1Promise = gatewayFinder(version: 1, friendlyName: friendlyName).search()
+        let searchV2Promise = gatewayFinder(version: 2, friendlyName: friendlyName).search()
         return all([searchV1Promise, searchV2Promise]).then {
             try getLatestService(from: $0.reduce([], +))
         }
