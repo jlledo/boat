@@ -8,16 +8,11 @@ public struct Boat {
     public static let packageName = "Boat"
     public static let packageVersion = Version(major: 0, minor: 1)
 
-    static let osName = "macOS"
-
-    static var userAgent: ProductIdentifier {
-        let osVersion = ProcessInfo.processInfo.operatingSystemVersion
-        return ProductIdentifier(
-            "\(Self.osName)/\(osVersion.majorVersion).\(osVersion.minorVersion) " +
-            "UPnP/2.0 " +
-            "\(Self.packageName)/\(packageVersion)"
-        )!
-    }
+    static let userAgent = ProductIdentifier(
+        os: ProductIdentifier.Token(name: SysctlWrapper.osType, version: SysctlWrapper.osRelease),
+        upnp: ProductIdentifier.Token(name: "UPnP", version: "2.0"),
+        product: ProductIdentifier.Token(name: packageName, version: packageVersion)
+    )
 
     static let upnpURNNamespace = "schemas-upnp-org"
 
