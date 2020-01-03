@@ -48,8 +48,8 @@ public struct PortMapping {
         self.enabled = enable
     }
 
-    func buildActionInvocation(version: Int) -> Promise<UPnPActionInvocation> {
-        return internalClient.then { internalClient -> UPnPActionInvocation in
+    func asControlMessage(forVersion version: Int) -> Promise<UPnPControlMessage> {
+        return internalClient.then { internalClient -> UPnPControlMessage in
             var arguments = [(String, AnyEncodable)]()
             arguments.append(("NewRemoteHost", AnyEncodable(self.remoteHost)))
             arguments.append(("NewExternalPort", AnyEncodable(self.externalPort)))
@@ -60,7 +60,7 @@ public struct PortMapping {
             arguments.append(("NewPortMappingDescription", AnyEncodable(self.description)))
             arguments.append(("NewLeaseDuration", AnyEncodable(self.leaseDuration)))
 
-            return UPnPActionInvocation(
+            return UPnPControlMessage(
                 action: UPnPActionURN(
                     serviceType: .wanIPConnection(version),
                     name: version == 1 ? "AddPortMapping" : "AddAnyPortMapping"

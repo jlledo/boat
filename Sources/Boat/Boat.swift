@@ -82,7 +82,7 @@ public struct Boat {
             gatewayHost: gatewayHost
         )
 
-        return portMapping.buildActionInvocation(version: version).then {
+        return portMapping.asControlMessage(forVersion: version).then {
             URLSession.shared.upload(
                 data: try $0.soapEncoded(),
                 with: try $0.soapURLRequest(endpoint: endpoint)

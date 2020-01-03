@@ -1,7 +1,7 @@
 import Foundation
 import XMLCoder
 
-struct UPnPActionInvocation {
+struct UPnPControlMessage {
     let action: UPnPActionURN
     let arguments: [(String, AnyEncodable)]
 
@@ -15,7 +15,7 @@ struct UPnPActionInvocation {
     private static let upnpNamespacePrefix: String = "u"
 }
 
-extension UPnPActionInvocation: Encodable {
+extension UPnPControlMessage: Encodable {
     func encode(to encoder: Encoder) throws {
         var envelope = encoder.container(keyedBy: DynamicKey.self)
         try envelope.encode(
@@ -46,7 +46,7 @@ extension UPnPActionInvocation: Encodable {
     }
 }
 
-extension UPnPActionInvocation: DynamicNodeEncoding {
+extension UPnPControlMessage: DynamicNodeEncoding {
     static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
         if key.stringValue == "xmlns:\(Self.soapNamespacePrefix)" ||
             key.stringValue == "xmlns:\(Self.upnpNamespacePrefix)" ||
@@ -58,7 +58,7 @@ extension UPnPActionInvocation: DynamicNodeEncoding {
     }
 }
 
-extension UPnPActionInvocation {
+extension UPnPControlMessage {
     func soapEncoded() throws -> Data {
         let header = XMLHeader(version: 1.0)
         return try XMLEncoder().encode(self, withRootKey: Self.rootKey, header: header)

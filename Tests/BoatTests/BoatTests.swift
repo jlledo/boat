@@ -40,9 +40,9 @@ final class BoatTests: XCTestCase {
         wait(for: [expectation], timeout: 5.0)
     }
 
-    func testActionInvocationEncoding() {
+    func testPortMappingControlMessageEncoding() {
         let expectation = XCTestExpectation(
-            description: "Build port mapping action invocation without errors"
+            description: "Build port mapping control message without errors"
         )
 
         let port = 1024
@@ -52,7 +52,7 @@ final class BoatTests: XCTestCase {
             description: "",
             gatewayHost: "192.168.1.1"
         )
-        _ = mapping.buildActionInvocation(version: 1).then {
+        _ = mapping.asControlMessage(forVersion: 1).then {
             _ = try $0.soapEncoded()
             expectation.fulfill()
         }
@@ -147,7 +147,7 @@ final class BoatTests: XCTestCase {
         ("testAddPortMapping", testAddPortMapping),
         ("testAddPortMappingUnauthorized", testAddPortMappingUnauthorized),
         ("testLocalAddressForHost", testLocalAddressForHost),
-        ("testActionInvocationEncoding", testActionInvocationEncoding),
+        ("testPortMappingControlMessageEncoding", testPortMappingControlMessageEncoding),
         ("testDeviceTypeFromDecoderStandard", testDeviceTypeFromDecoderStandard),
         ("testDeviceTypeFromDecoderVendor", testDeviceTypeFromDecoderVendor),
         ("testSearchGateway", testSearchGateway),
