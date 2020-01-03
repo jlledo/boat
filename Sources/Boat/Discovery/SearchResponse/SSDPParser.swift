@@ -1,8 +1,6 @@
 import Foundation
 
-class SSDPParser {
-    private init() {}
-
+enum SSDPParser {
     static func parse(_ data: Data) throws -> SSDPMessageInfo
     {
         let lines = String(decoding: data, as: UTF8.self).split(separator: "\r\n")

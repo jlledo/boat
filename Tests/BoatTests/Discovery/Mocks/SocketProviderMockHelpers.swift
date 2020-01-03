@@ -1,6 +1,4 @@
-class SocketProviderMockHelpers {
-    private init() {}
-
+enum SocketProviderMockHelpers {
     static let validSSDPSearchResponse =
         "HTTP/1.1 200 OK\r\n" +
         "CACHE-CONTROL: max-age=0\r\n" +

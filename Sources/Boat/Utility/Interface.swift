@@ -2,9 +2,7 @@ import Darwin
 import Network
 import Promises
 
-class Interface {
-    private init() {}
-
+enum Interface {
     enum AddressFamily: Int {
         case ipv4 = 2 // AF_INET
         case ipv6 = 30 // AF_INET6

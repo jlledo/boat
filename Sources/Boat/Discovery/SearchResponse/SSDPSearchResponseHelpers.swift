@@ -1,6 +1,4 @@
-class SSDPSearchResponseHelpers {
-    private init() {}
-
+enum SSDPSearchResponseHelpers {
     static func extract(
         header: String,
         from headerDict: [String: String]

@@ -6,9 +6,7 @@ fileprivate protocol URLType {
 extension URL: URLType {}
 extension URLComponents: URLType {}
 
-fileprivate class URLDecodingHelpers {
-    private init() {}
-
+fileprivate enum URLDecodingHelpers {
     private static func url<T>(
         from value: String,
         ofType type: T.Type,
