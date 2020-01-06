@@ -78,7 +78,7 @@ final class BoatTests: XCTestCase {
     }
 
     func testSearchGateway() {
-        let expectation = XCTestExpectation(description: "Get gateway device description")
+        let expectation = XCTestExpectation(description: "Get gateway device responses")
         _ = DeviceFinder.searchGateway(friendlyName: "BoatTests").then { _ in
             expectation.fulfill()
         }

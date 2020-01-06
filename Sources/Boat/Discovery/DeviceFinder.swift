@@ -119,36 +119,12 @@ struct DeviceFinder {
         }
     }
 
-    private static func getLatestService(
-        from responses: [SSDPSearchResponse]
-    ) throws -> SSDPSearchResponse {
-        var maxVersion: Int = 0
-        var maxVersionResponse: SSDPSearchResponse? = nil
-        for response in responses {
-            guard case .service(.wanIPConnection(let version)) = response.searchTarget else {
-                continue
-            }
-            guard version != maxVersion else {
-                throw DiscoveryError.tooManyGateways
-            }
-            if version > maxVersion {
-                maxVersion = version
-                maxVersionResponse = response
-            }
-        }
-
-        guard let response = maxVersionResponse else {
-            throw DiscoveryError.gatewayNotFound
-        }
-        return response
-    }
-
-    static func searchGateway(friendlyName: String) -> Promise<SSDPSearchResponse> {
+    static func searchGateway(friendlyName: String) -> Promise<[SSDPSearchResponse]> {
         // Search for all supported WANIPConnection versions
         let searchV1Promise = gatewayFinder(version: 1, friendlyName: friendlyName).search()
         let searchV2Promise = gatewayFinder(version: 2, friendlyName: friendlyName).search()
         return all([searchV1Promise, searchV2Promise]).then {
-            try getLatestService(from: $0.reduce([], +))
+            $0[1].isEmpty ? $0[0] : $0[1]
         }
     }
 }
