@@ -11,11 +11,19 @@ enum UPnPActionError: Int, Error {
     case outOfMemory = 603
     case humanInterventionRequired = 604
     case stringArgumentTooLong = 605
-
-    // WANIPConnection:2::AddAnyPortMapping() errors
     case actionNotAuthorized = 606
+
+    // GetGenericPortMappingEntry errors
+    case specifiedArrayIndexInvalid = 713
+
+    // Add(Any)PortMapping errors
     case wildCardNotPermittedInSrcIP = 715
     case wildCardNotPermittedInExtPort = 716
+    case conflictInMappingEntry = 718
+    case samePortValuesRequired = 724
+    case onlyPermanentLeasesSupported = 725
+    case remoteHostOnlySupportsWildcard = 726
+    case externalPortOnlySupportsWildcard = 727
     case noPortMapsAvailable = 728
     case conflictWithOtherMechanisms = 729
     case wildCardNotPermittedInIntPort = 732
