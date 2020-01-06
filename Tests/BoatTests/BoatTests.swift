@@ -25,6 +25,7 @@ final class BoatTests: XCTestCase {
 
         _ = Boat.addPortMapping(for: 123, programName: "BoatTests").catch {
             XCTAssertEqual($0 as? UPnPActionError, UPnPActionError.actionNotAuthorized)
+            expectaction.fulfill()
         }
 
         wait(for: [expectaction], timeout: 5.0)
