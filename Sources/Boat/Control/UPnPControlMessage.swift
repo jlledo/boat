@@ -82,3 +82,23 @@ extension UPnPControlMessage {
         return request
     }
 }
+
+struct GetGenericPortMappingEntry {
+    let index: Int
+
+    init(_ index: Int) {
+        self.index = index
+    }
+
+    func asControlMessage(forVersion version: Int) -> UPnPControlMessage {
+        UPnPControlMessage(
+            action: UPnPActionURN(
+                serviceType: .wanIPConnection(version),
+                name: "GetGenericPortMappingEntry"
+            ),
+            arguments: [
+                ("NewPortMappingIndex", AnyEncodable(index)),
+            ]
+        )
+    }
+}
